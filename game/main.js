@@ -37,15 +37,17 @@ import {
 import {
     hashCode,
     randomBetween
-} from './utils/baseUtils.js'
+} from './utils/baseUtils.js';
 
 import {
     resize
 } from './utils/imageUtils.js';
 
 import {
-    onSwipe
-} from './utils/inputUtils.js'
+    onSwipe, canvasInputPosition
+} from './utils/inputUtils.js';
+
+import { Burst } from './objects/effects.js';
 
 import Player from './characters/player.js';
 import ParticleSprite from './objects/particleSprite.js';
@@ -74,7 +76,7 @@ class Game {
         document.addEventListener('touchmove', ({ touches }) => this.handleTouchMove(touches[0]));
 
         // handle overlay clicks
-        this.overlay.root.addEventListener('click', ({ target }) => this.handleClicks(target));
+        this.overlay.root.addEventListener('click', (e) => this.handleClicks(e));
 
         // handle swipes
         document.addEventListener('touchstart', ({ touches }) => this.handleSwipe('touchstart', touches[0]));
@@ -123,7 +125,7 @@ class Game {
             paused: false,
             muted: localStorage.getItem(this.prefix.concat('muted')) === 'true'
         };
-        console.log(this.state);
+        // console.log(this.state);
 
         this.input = {
             active: 'keyboard',
@@ -138,6 +140,7 @@ class Game {
 
         this.columns = [];
         this.particles = [];
+        this.effects = [];
         this.player = {};
 
         // set topbar and topbar color
@@ -299,6 +302,20 @@ class Game {
                 part.draw();
             }
 
+            // test burst on click
+            for (let i = 0; i < this.effects.length; i++) {
+                let effect = this.effects[i];
+
+                // run effect tick
+                effect.tick();
+
+                // remove non active effects
+                if (!effect.active) {
+                    this.effects.splice(i, 1);
+                }
+                
+            }
+
             // player bounce
             let dy = Math.cos(this.frame.count / 5) / 30;
 
@@ -325,8 +342,11 @@ class Game {
     }
 
     // event listeners
-    handleClicks(target) {
+    handleClicks(e) {
         if (this.state.current === 'loading') { return; }
+
+        let { target } = e;
+
         // mute
         if (target.id === 'mute') {
             this.mute();
@@ -347,6 +367,15 @@ class Game {
             this.mute();
         }
 
+        // test burst
+        let location = canvasInputPosition(this.canvas, e)
+        this.effects.push(new Burst(this.ctx, 30, location.x, location.y, 100, {
+            rMin: 1,
+            rMax: 3,
+            hueMin: 200,
+            hueMax: 250
+        }));
+
     }
 
     handleKeyboardInput(type, code) {
@@ -364,10 +393,11 @@ class Game {
                 });
             }
 
-            window.console.log(this.state.playerColumn);
+            // console.log(this.state.playerColumn);
 
             if (code === 'Space') {
-                this.pause(); // pause
+
+                // this.pause(); // pause
             }
         }
 
@@ -402,7 +432,7 @@ class Game {
         onSwipe(type, touch, 5, (swipe) => {
 
             // do something with the swipe
-            console.log('swipe', swipe);
+            this.input.swipe = swipe;
         });
     }
 

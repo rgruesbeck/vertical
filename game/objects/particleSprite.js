@@ -21,8 +21,8 @@ class ParticleSprite extends Sprite {
         super(options);
         this.ctx = options.ctx;
 
-        this.r = randomBetween(7, 2, true);
-        this.hue = randomBetween(60, 0, true);
+        this.r = randomBetween(2, 7, true);
+        this.hue = randomBetween(0, 60, true);
     }
 
     draw() {
