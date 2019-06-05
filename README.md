@@ -1,7 +1,6 @@
-# HTML5 Canvas Game Scaffold
-![Game Artwork](https://i.imgur.com/jcBe9Ef.png)
+# Vertical
 
-A perfect template for new game makers.
+A vertical obstacle game.
 
 # VCC's
 

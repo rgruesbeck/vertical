@@ -1,7 +1,5 @@
-![Game Artwork](https://i.imgur.com/jcBe9Ef.png)
-
-# HTML5 Canvas Game Scaffold
-Games are awesome to play and share, and this template makes it easy to create one (or many) of your own without having to learn a complicated framework. This template gives you a complete scaffold to start building right away.
+# Vertical
+Casual obstacle games like Temple Run and are super fun, and this template makes it easy to create one (or many) of your own without having to learn a complicated framework. This template gives you a complete scaffold to start building right away.
 
 ## Visual Customization Controls (VCC's)
 - 🎮 Customize game settings.
@@ -11,8 +9,8 @@ Games are awesome to play and share, and this template makes it easy to create o
 - ⚙️ Add Google Analytics ID and Open Graph information for sharing.
 
 ## Some Ideas
-- An idle miner game.
-- A classic puzzle game.
+- Dodge the haters
+- Make it horizontal
 
 ## People are here to help you get it done
 If you need any help, you can ask the community by [making a post](https://gokoji.com/posts), or [joining the discord](https://discordapp.com/invite/eQuMJF6).
