@@ -1,0 +1,28 @@
+{
+  "images": {
+    "playerImage": "https://i.imgur.com/JchtoH4.png",
+    "backgroundImage": "https://i.imgur.com/K7QV0KH.png"
+  },
+  "@@editor": [
+    {
+      "key": "images",
+      "name": "Images",
+      "icon": "🖼️",
+      "source": "images.json",
+      "fields": [
+        {
+          "key": "playerImage",
+          "name": "Player Image",
+          "description": "Player image",
+          "type": "image"
+        },
+        {
+          "key": "backgroundImage",
+          "name": "Background Image",
+          "description": "Background image",
+          "type": "image"
+        }
+      ]
+    }
+  ]
+}

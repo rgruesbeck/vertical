@@ -1,0 +1,21 @@
+{
+    "sounds": {
+      "backgroundMusic": "https://ia800900.us.archive.org/21/items/kzz003/01_-_james_scott_-_frog_legs_rag_vbr.mp3"
+    },
+    "@@editor": [
+      {
+        "key": "sounds",
+        "name": "Sounds",
+        "icon": "🔊️",
+        "source": "sounds.json",
+        "fields": [
+          {
+            "key": "backgroundMusic",
+            "name": "Background Music",
+            "description": "Music to loop in background",
+            "type": "sound"
+          }
+        ]
+      }
+    ]
+  }

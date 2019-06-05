@@ -1,0 +1,12 @@
+# Node modules
+node_modules
+
+# Parcel Builds
+dist
+.cache
+
+# tmp
+.tmp
+
+# eslit
+.eslintrc.json
