@@ -81,8 +81,6 @@ class Sprite {
             ...this.target,
             ...{ x, y }
         };
-
-        console.log(this.target);
     }
 
     setX(nx) {

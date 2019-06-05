@@ -7,6 +7,3 @@ dist
 
 # tmp
 .tmp
-
-# eslit
-.eslintrc.json

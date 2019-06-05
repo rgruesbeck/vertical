@@ -90,7 +90,6 @@ class Game {
         
         // handle koji config changes
         Koji.on('change', (scope, key, value) => {
-            console.log('updating configs...', scope, key, value);
             this.config[scope][key] = value;
             this.cancelFrame(this.frame.count - 1);
             this.load();
@@ -311,11 +310,13 @@ class Game {
 
         // player wins
         if (this.state.current === 'win') {
+            // win code
 
         }
 
         // game over
         if (this.state.current === 'over') {
+            // game over code
 
         }
 
@@ -363,7 +364,7 @@ class Game {
                 });
             }
 
-            console.log(this.state.playerColumn);
+            window.console.log(this.state.playerColumn);
 
             if (code === 'Space') {
                 this.pause(); // pause
@@ -401,7 +402,7 @@ class Game {
         onSwipe(type, touch, 5, (swipe) => {
 
             // do something with the swipe
-            // console.log('swipe', swipe);
+            console.log('swipe', swipe);
         });
     }
 
