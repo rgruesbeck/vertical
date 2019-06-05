@@ -1,9 +1,9 @@
 /**
- * game/objects/imageSprite.js
+ * game/objects/particleSprite.js
  * 
  * What it Does:
- *   This file is a basic image sprite it extends the sprite class
- *   and draws an image to the screen
+ *   This file is a basic particle sprite it extends the sprite class
+ *   and draws an particle to the screen
  * 
  * What to Change:
  *   Add any new methods you want all your
