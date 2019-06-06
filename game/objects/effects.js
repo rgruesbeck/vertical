@@ -13,20 +13,30 @@
  */
 
 import {
-    randomBetween,
     valueOrRange
 } from '../utils/baseUtils.js';
 import {
     getDistance
 } from '../utils/spriteUtils.js';
 
-const emitParticles = ({ n = 1, x = 0, y = 0, vx = 1, vy = 1, rd = 2, hue = 0 }) => {
-    return Array.apply(null, {length: n})
+const praticleEmitter = ({ n = 1, x = 0, y = 0, vx = 1, vy = 1, rd = 2, hue = 0 }) => {
+    return Array.apply(null, { length: n })
     .map(() => { return {
         x: valueOrRange(x),
         y: valueOrRange(y),
         vx: valueOrRange(vx),
         vy: valueOrRange(vy),
+        rd: valueOrRange(rd),
+        hue: valueOrRange(hue)
+    }; });
+}
+
+const radialWaveEmitter = ({ n = 1, x = 0, y = 0, rd = 2, width = 50, hue = 0 }) => {
+    return Array.apply(null, { length: n })
+    .map(() => { return {
+        x: valueOrRange(x),
+        y: valueOrRange(y),
+        width: valueOrRange(width),
         rd: valueOrRange(rd),
         hue: valueOrRange(hue)
     }; });
@@ -39,7 +49,17 @@ const drawParticle = (ctx, p) => {
     ctx.fill();
 }
 
-function StarStream({ ctx, n, x, y, vx, vy, rd, hue }) {
+const drawWave = (ctx, w) => {
+    ctx.beginPath();
+    ctx.arc(w.x >> 0, w.y >> 0, w.rd >> 0, 0, 2 * Math.PI);
+    ctx.lineWidth = w.width;
+    ctx.strokeStyle = `hsla(${w.hue}, 100%, 50%, 1)`;
+    ctx.stroke();
+}
+
+function StarStream({ ctx, n = 1, x, y, vx, vy, rd, hue }) {
+    this.id = Math.random().toString(16).slice(2);
+    this.type = 'star-stream';
     this.active = true;
     this.ctx = ctx;
     this.n = n;
@@ -52,8 +72,8 @@ function StarStream({ ctx, n, x, y, vx, vy, rd, hue }) {
     this.stream = [];
 
     // create new star
-    this.createStar = (n) => {
-        return emitParticles({
+    this.createStars = (n) => {
+        return praticleEmitter({
             n: n,
             x: this.x,
             y: this.y,
@@ -77,11 +97,11 @@ function StarStream({ ctx, n, x, y, vx, vy, rd, hue }) {
             star.y += star.vy;
 
             // update size and color
-            star.rd = Math.abs(star.rd - 0.1);
-            star.hue -= 0.5;
+            star.rd = Math.abs(star.rd - 0.025);
+            star.hue -= 0.25;
 
             // remove offscreen stars
-            if (star.y > this.ctx.height) {
+            if (star.y > this.ctx.canvas.height) {
                 this.stream.splice(i, 1);
             }
 
@@ -90,19 +110,21 @@ function StarStream({ ctx, n, x, y, vx, vy, rd, hue }) {
         }
 
         // add new stars if less than n
-        if (this.stream.length < this.n + 1) {
+        if (this.stream.length < this.n) {
             // add new stars to the stream
-            this.stream.push(this.createStar(1));
+            this.stream.push(...this.createStars(1));
         }
     }
 }
 
 function Burst(ctx, n = 10, x, y, radius) {
+    this.id = Math.random().toString(16).slice(2);
+    this.type = 'burst';
+    this.active = true;
     this.ctx = ctx;
     this.center = { x, y };
     this.radius = radius;
-    this.active = true;
-    this.shards = emitParticles({
+    this.shards = praticleEmitter({
         n: n,
         x: x,
         y: y,
@@ -150,17 +172,19 @@ function Burst(ctx, n = 10, x, y, radius) {
 }
 
 function BlastWave({ ctx, x, y, radius }) {
+    this.id = Math.random().toString(16).slice(2);
+    this.type = 'blast-wave';
     this.active = true;
     this.ctx = ctx;
     this.center = { x, y };
     this.radius = radius;
-    this.waves = [{
+    this.waves = radialWaveEmitter({
         x: x,
         y: y,
-        r: randomBetween(1, 10, true),
+        rd: 25,
         width: 50,
-        hue: randomBetween(300, 350, true)
-    }];
+        hue: [300, 350]
+    })
 
     this.tick = () => {
         // only tick if active
@@ -177,28 +201,27 @@ function BlastWave({ ctx, x, y, radius }) {
             let wave = this.waves[i];
 
             // draw waves
-            wave.r += 7;
+            wave.rd += 7;
             wave.hue -= 1;
             wave.width -= 0.5;
-            
-            this.ctx.beginPath();
-            this.ctx.arc(wave.x, wave.y, wave.r, 0, 2 * Math.PI);
-            this.ctx.lineWidth = wave.width;
-            this.ctx.strokeStyle = `hsla(${wave.hue}, 100%, 50%, 1)`;
-            this.ctx.stroke();
 
             // remove wave when larger than blast radius
             if (wave.width < 1) {
                 this.waves.splice(i, 1);
             }
+
+            // draw wave
+            drawWave(this.ctx, wave);
         }
 
     }
 }
 
 export {
-    emitParticles,
+    praticleEmitter,
+    radialWaveEmitter,
     drawParticle,
+    drawWave,
     Burst,
     BlastWave,
     StarStream
