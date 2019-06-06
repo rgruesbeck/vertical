@@ -35,8 +35,7 @@ import {
 } from './helpers/assetLoaders.js';
 
 import {
-    hashCode,
-    randomBetween
+    hashCode
 } from './utils/baseUtils.js';
 
 import {
@@ -50,7 +49,6 @@ import {
 import { Burst, BlastWave } from './objects/effects.js';
 
 import Player from './characters/player.js';
-import ParticleSprite from './objects/particleSprite.js';
 
 class Game {
 
@@ -138,10 +136,10 @@ class Game {
         this.sounds = {}; // place to keep sounds
         this.fonts = {}; // place to keep fonts
 
-        this.columns = [];
-        this.particles = [];
-        this.effects = [];
-        this.player = {};
+        this.columns = []; // columns
+        this.effects = []; // effects
+        this.entities = []; // entities (obstacles, powerups)
+        this.player = {}; // player
 
         // set topbar and topbar color
         this.topbar.active = this.config.settings.gameTopBar;
@@ -273,40 +271,6 @@ class Game {
 
             if (!this.state.muted) { this.sounds.backgroundMusic.play(); }
 
-            // add particle stream
-            if (this.particles.length < 200) {
-                this.particles.push(
-                    new ParticleSprite({
-                        ctx: this.ctx,
-                        x: randomBetween(0, this.screen.right, 1),
-                        y: 0,
-                        width: 10,
-                        height: 10,
-                        bounds: this.screen
-                    })
-                );
-            }
-
-            // due to amount of items to render,
-            // using for loop instead of functional iterators
-            // reduces garbage collection
-            for (let i = 0; i < this.particles.length; i++) {
-                const part = this.particles[i];
-
-                // update particle
-                part.hue -= 0.5;
-                part.r = Math.abs(part.r - 0.005);
-                part.y += 7 * this.screen.scale;
-
-                // remove offscreen particles
-                if (part.y > this.screen.bottom) {
-                    this.particles.splice(i, 1);
-                }
-                
-                // draw particle
-                part.draw();
-            }
-
             // test burst on click
             for (let i = 0; i < this.effects.length; i++) {
                 let effect = this.effects[i];
@@ -373,12 +337,7 @@ class Game {
 
         // test burst
         let location = canvasInputPosition(this.canvas, e)
-        this.effects.push(new Burst(this.ctx, 60, location.x, location.y, 300, {
-            rMin: 1,
-            rMax: 5,
-            hueMin: 200,
-            hueMax: 250
-        }));
+        this.effects.push(new Burst(this.ctx, 50, location.x, location.y, 0.1));
 
         // test blast wave
         this.effects.push(new BlastWave({

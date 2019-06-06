@@ -15,11 +15,8 @@
 import {
     valueOrRange
 } from '../utils/baseUtils.js';
-import {
-    getDistance
-} from '../utils/spriteUtils.js';
 
-const praticleEmitter = ({ n = 1, x = 0, y = 0, vx = 1, vy = 1, rd = 2, hue = 0 }) => {
+const praticleEmitter = ({ n = 1, x = 0, y = 0, vx = 1, vy = 1, rd = 2, hue = 0, alpha = 1 }) => {
     return Array.apply(null, { length: n })
     .map(() => { return {
         x: valueOrRange(x),
@@ -27,25 +24,27 @@ const praticleEmitter = ({ n = 1, x = 0, y = 0, vx = 1, vy = 1, rd = 2, hue = 0 
         vx: valueOrRange(vx),
         vy: valueOrRange(vy),
         rd: valueOrRange(rd),
-        hue: valueOrRange(hue)
+        hue: valueOrRange(hue),
+        alpha: valueOrRange(alpha)
     }; });
 }
 
-const radialWaveEmitter = ({ n = 1, x = 0, y = 0, rd = 2, width = 50, hue = 0 }) => {
+const radialWaveEmitter = ({ n = 1, x = 0, y = 0, rd = 2, width = 50, hue = 0, alpha = 1 }) => {
     return Array.apply(null, { length: n })
     .map(() => { return {
         x: valueOrRange(x),
         y: valueOrRange(y),
         width: valueOrRange(width),
         rd: valueOrRange(rd),
-        hue: valueOrRange(hue)
+        hue: valueOrRange(hue),
+        alpha: valueOrRange(alpha)
     }; });
 }
 
 const drawParticle = (ctx, p) => {
     ctx.beginPath();
     ctx.arc(p.x >> 0, p.y >> 0, p.rd >> 0, 0, 2 * Math.PI, false);
-    ctx.fillStyle = `hsla(${p.hue}, 100%, 50%, 1)`;
+    ctx.fillStyle = `hsla(${p.hue}, 100%, 50%, ${p.alpha})`;
     ctx.fill();
 }
 
@@ -53,7 +52,7 @@ const drawWave = (ctx, w) => {
     ctx.beginPath();
     ctx.arc(w.x >> 0, w.y >> 0, w.rd >> 0, 0, 2 * Math.PI);
     ctx.lineWidth = w.width;
-    ctx.strokeStyle = `hsla(${w.hue}, 100%, 50%, 1)`;
+    ctx.strokeStyle = `hsla(${w.hue}, 100%, 50%, ${w.alpha})`;
     ctx.stroke();
 }
 
@@ -117,13 +116,13 @@ function StarStream({ ctx, n = 1, x, y, vx, vy, rd, hue }) {
     }
 }
 
-function Burst(ctx, n = 10, x, y, radius) {
+function Burst(ctx, n = 10, x, y, burnRate) {
     this.id = Math.random().toString(16).slice(2);
     this.type = 'burst';
     this.active = true;
     this.ctx = ctx;
+    this.burnRate = burnRate;
     this.center = { x, y };
-    this.radius = radius;
     this.shards = praticleEmitter({
         n: n,
         x: x,
@@ -153,15 +152,11 @@ function Burst(ctx, n = 10, x, y, radius) {
             shard.y += shard.vy;
 
             // update size and color
-            shard.rd = Math.abs(shard.rd - 0.1);
-            shard.hue -= 0.5;
+            shard.rd = Math.abs(shard.rd - this.burnRate);
+            shard.hue -= this.burnRate * 5;
 
-            // update distance from burst center
-            shard.distance = getDistance(this.center, shard);
-
-            // remove out of radius or slow shards
-            let slow = Math.abs(shard.vx * shard.vy) < 1;
-            if (shard.distance > this.radius || slow) {
+            // remove burned shards
+            if (shard.rd < 1) {
                 this.shards.splice(i, 1);
             }
 
