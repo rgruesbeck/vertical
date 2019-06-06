@@ -46,7 +46,11 @@ import {
     onSwipe, canvasInputPosition
 } from './utils/inputUtils.js';
 
-import { Burst, BlastWave } from './objects/effects.js';
+import {
+    Burst,
+    BlastWave,
+    StarStream
+} from './objects/effects.js';
 
 import Player from './characters/player.js';
 
@@ -328,6 +332,18 @@ class Game {
         // button
         if ( target.id === 'button') {
             this.setState({ current: 'play' });
+
+            // start star stream
+            this.effects.push(new StarStream({
+                ctx: this.ctx,
+                n: 200,
+                x: [0, this.canvas.width],
+                y: 0,
+                vx: 0,
+                vy: 15,
+                rd: [2, 7],
+                hue: [0, 70]
+            }))
 
             // if defaulting to have sound on by default
             // double mute() to warmup iphone audio here

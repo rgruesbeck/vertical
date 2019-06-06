@@ -79,7 +79,8 @@ function StarStream({ ctx, n = 1, x, y, vx, vy, rd, hue }) {
             vx: this.vx,
             vy: this.vy,
             rd: this.rd,
-            hue: this.hue
+            hue: this.hue,
+            alpha: 0
         });
     }
 
@@ -98,6 +99,7 @@ function StarStream({ ctx, n = 1, x, y, vx, vy, rd, hue }) {
             // update size and color
             star.rd = Math.abs(star.rd - 0.025);
             star.hue -= 0.25;
+            star.alpha += 0.050;
 
             // remove offscreen stars
             if (star.y > this.ctx.canvas.height) {
@@ -178,7 +180,8 @@ function BlastWave({ ctx, x, y, radius }) {
         y: y,
         rd: 25,
         width: 50,
-        hue: [300, 350]
+        hue: [300, 350],
+        alpha: 1
     })
 
     this.tick = () => {
@@ -197,8 +200,9 @@ function BlastWave({ ctx, x, y, radius }) {
 
             // draw waves
             wave.rd += 7;
-            wave.hue -= 1;
             wave.width -= 0.5;
+            wave.hue -= 1;
+            wave.alpha -= 0.0075;
 
             // remove wave when larger than blast radius
             if (wave.width < 1) {
