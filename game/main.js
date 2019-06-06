@@ -47,7 +47,7 @@ import {
     onSwipe, canvasInputPosition
 } from './utils/inputUtils.js';
 
-import { Burst } from './objects/effects.js';
+import { Burst, BlastWave } from './objects/effects.js';
 
 import Player from './characters/player.js';
 import ParticleSprite from './objects/particleSprite.js';
@@ -238,20 +238,25 @@ class Game {
 
         // ready to play
         if (this.state.current === 'ready') {
-            this.overlay.hide('loading');
-            this.canvas.style.opacity = 1;
 
-            this.overlay.setBanner(this.config.settings.name);
-            this.overlay.setButton(this.config.settings.startText);
-            this.overlay.setInstructions({
-                desktop: this.config.settings.instructionsDesktop,
-                mobile: this.config.settings.instructionsMobile
-            });
+            if (this.state.prev === 'loading') {
+                this.overlay.hide('loading');
+                this.canvas.style.opacity = 1;
 
-            this.overlay.show('stats');
+                this.overlay.setBanner(this.config.settings.name);
+                this.overlay.setButton(this.config.settings.startText);
+                this.overlay.setInstructions({
+                    desktop: this.config.settings.instructionsDesktop,
+                    mobile: this.config.settings.instructionsMobile
+                });
 
-            this.overlay.setMute(this.state.muted);
-            this.overlay.setPause(this.state.paused);
+                this.overlay.show('stats');
+
+                this.overlay.setMute(this.state.muted);
+                this.overlay.setPause(this.state.paused);
+
+                this.setState({ current: 'ready' });
+            }
 
             // dev only
             // this.setState({ current: 'play' });
@@ -283,8 +288,8 @@ class Game {
             }
 
             // due to amount of items to render,
-            // using for loop instead for functional iterators
-            // reduces garbage collection, and only requires one loop
+            // using for loop instead of functional iterators
+            // reduces garbage collection
             for (let i = 0; i < this.particles.length; i++) {
                 const part = this.particles[i];
 
@@ -309,7 +314,7 @@ class Game {
                 // run effect tick
                 effect.tick();
 
-                // remove non active effects
+                // remove in-active effects
                 if (!effect.active) {
                     this.effects.splice(i, 1);
                 }
@@ -320,8 +325,7 @@ class Game {
             let dy = Math.cos(this.frame.count / 5) / 30;
 
             this.player.move(0, dy, this.frame.scale);
-            this.player.moveTo(this.state.playerColumn * this.state.columnSize, this.screen.bottom - this.player.height * 2);
-
+            this.player.moveTo(this.state.playerColumn * this.state.columnSize, this.screen.bottom - this.player.height); 
             this.player.draw();
         }
 
@@ -369,11 +373,19 @@ class Game {
 
         // test burst
         let location = canvasInputPosition(this.canvas, e)
-        this.effects.push(new Burst(this.ctx, 30, location.x, location.y, 100, {
+        this.effects.push(new Burst(this.ctx, 60, location.x, location.y, 300, {
             rMin: 1,
-            rMax: 3,
+            rMax: 5,
             hueMin: 200,
             hueMax: 250
+        }));
+
+        // test blast wave
+        this.effects.push(new BlastWave({
+            ctx: this.ctx,
+            x: location.x,
+            y: location.y,
+            radius: 300
         }));
 
     }

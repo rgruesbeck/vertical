@@ -13,10 +13,20 @@
  * 
  */
 
-import { bounded } from '../utils/baseUtils.js'
+import {
+    bounded
+} from '../utils/baseUtils.js'
 
 class Sprite {
-    constructor({ x, y, width, height, speed, direction, bounds }) {
+    constructor({
+        x,
+        y,
+        width,
+        height,
+        speed,
+        direction,
+        bounds
+    }) {
         // x and y
         this.x = x;
         this.y = y;
@@ -26,8 +36,8 @@ class Sprite {
         this.py = y;
 
         // center x and y
-        this.cx = x + (width/2);
-        this.cy = y + (height/2);
+        this.cx = x + (width / 2);
+        this.cy = y + (height / 2);
 
         // velocity x and y
         this.vx = 0;
@@ -47,7 +57,10 @@ class Sprite {
         this.direction = direction || 'right';
 
         // target
-        this.target = { x: 0, y: 0 };
+        this.target = {
+            x: 0,
+            y: 0
+        };
 
         // bounds
         this.setBounds(bounds);
@@ -60,37 +73,44 @@ class Sprite {
 
         // target dx
         dx = this.target.x != this.x ?
-        dx + ((this.target.x - this.x) / 1000 * this.speed) :
-        dx;
+            dx + ((this.target.x - this.x) / 1000 * this.speed) :
+            dx;
 
         // target dy
         dy = this.target.y != this.y ?
-        dy + ((this.target.y - this.y) / 3000 * this.speed) :
-        dy;
-        
+            dy + ((this.target.y - this.y) / 3000 * this.speed) :
+            dy;
+
         this.setX(dx);
         this.setY(dy);
 
         // set direction
-        if (x < 0) { this.direction = 'right'; }
-        if (x > 0) { this.direction = 'left'; }
+        if (x < 0) {
+            this.direction = 'right';
+        }
+        if (x > 0) {
+            this.direction = 'left';
+        }
     }
 
     moveTo(x = this.target.x, y = this.target.y) {
         this.target = {
             ...this.target,
-            ...{ x, y }
+            ...{
+                x,
+                y
+            }
         };
     }
 
     setX(nx) {
         // apply x bounds
         const x = bounded(nx, this.bounds.left, this.bounds.right - this.width);
-
+ 
         this.px = this.x; // store previous x value
         this.x = x; // set x
 
-        this.cx = this.x + (this.width/2); // set center x
+        this.cx = this.x + (this.width / 2); // set center x
         this.vx = this.x - this.px; // set velocity x
     }
 
@@ -101,11 +121,16 @@ class Sprite {
         this.py = this.y; // store previous y value
         this.y = y; // set y
 
-        this.cy = this.y + (this.height/2); // set center y
+        this.cy = this.y + (this.height / 2); // set center y
         this.vy = this.y - this.py; // set velocity y
     }
 
-    setBounds({ top, right, bottom, left }) {
+    setBounds({
+        top,
+        right,
+        bottom,
+        left
+    }) {
         let bounds = {
             top: top,
             right: right,

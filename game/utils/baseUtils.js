@@ -33,6 +33,11 @@ const randomBetween = (min, max, int = false) => {
     return int ? Math.round(rand) : rand;
 }
 
+// pass either a value or a range and get a value
+const valueOrRange = (vr) => {
+    return Array.isArray(vr) ? randomBetween(vr[0], vr[1], true) : vr;
+}
+
 // apply a lower and upper bound to a number
 const bounded = (n, min, max) => {
     return [n]
@@ -129,6 +134,7 @@ export {
     findIn,
     hexToRgbA,
     randomBetween,
+    valueOrRange,
     hashCode,
     throttled
 };
