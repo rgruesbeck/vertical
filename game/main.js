@@ -121,9 +121,9 @@ class Game {
         this.state = {
             current: 'loading',
             prev: '',
-            columns: parseInt(this.config.settings.columns),
-            playerColumn: parseInt(this.config.settings.columns) /  2 >> 0,
-            columnSize: Math.floor(this.canvas.width / parseInt(this.config.settings.columns)),
+            lanes: parseInt(this.config.settings.lanes),
+            playerLane: parseInt(this.config.settings.lanes) /  2 >> 0,
+            laneSize: Math.floor(this.canvas.width / parseInt(this.config.settings.lanes)),
             score: 0,
             lives: parseInt(this.config.settings.lives),
             paused: false,
@@ -141,7 +141,7 @@ class Game {
         this.sounds = {}; // place to keep sounds
         this.fonts = {}; // place to keep fonts
 
-        this.columns = []; // columns
+        this.lanes = []; // lanes
         this.effects = []; // effects
         this.entities = []; // entities (obstacles, powerups)
         this.player = {}; // player
@@ -205,12 +205,12 @@ class Game {
         const { top } = this.screen;
         const { playerImage } = this.images;
 
-        let playerSize = resize({ image: playerImage, width: this.state.columnSize });
+        let playerSize = resize({ image: playerImage, width: this.state.laneSize });
 
         this.player = new Player({
             ctx: this.ctx,
             image: playerImage,
-            x: this.state.playerColumn * this.state.columnSize,
+            x: this.state.playerLane * this.state.laneSize,
             y: top,
             width: playerSize.width,
             height: playerSize.height,
@@ -281,12 +281,12 @@ class Game {
             // add an obstacle
             if (this.frame.count % 200 === 0) {
                 let { obstacleImage } = this.images;
-                let obstacleSize = resize({ image: obstacleImage, width: this.state.columnSize });
+                let obstacleSize = resize({ image: obstacleImage, width: this.state.laneSize });
 
                 this.entities.push(new Obstacle({
                     ctx: this.ctx,
                     image: obstacleImage,
-                    x: 2 * this.state.columnSize,
+                    x: 2 * this.state.laneSize,
                     y: 0,
                     width: obstacleSize.width,
                     height: obstacleSize.height,
@@ -326,7 +326,7 @@ class Game {
             let dy = Math.cos(this.frame.count / 5) / 30;
 
             this.player.move(0, dy, this.frame.scale);
-            this.player.moveTo(this.state.playerColumn * this.state.columnSize, this.screen.bottom - this.player.height); 
+            this.player.moveTo(this.state.playerLane * this.state.laneSize, this.screen.bottom - this.player.height); 
             this.player.draw();
         }
 
@@ -410,18 +410,18 @@ class Game {
         if (type === 'keyup' && this.state.current === 'play') {
             if (code === 'ArrowRight') {
                 this.setState({
-                    playerColumn: Math.min(this.state.playerColumn + 1, this.state.columns - 1)
+                    playerLane: Math.min(this.state.playerLane + 1, this.state.lanes - 1)
                 });
             }
             if (code === 'ArrowLeft') {
                 this.setState({
-                    playerColumn: Math.max(this.state.playerColumn - 1, 0)
+                    playerLane: Math.max(this.state.playerLane - 1, 0)
                 });
             }
 
             if (code === 'Space') {
 
-                // this.pause(); // pause
+                this.pause(); // pause
             }
         }
 

@@ -6,7 +6,7 @@
       "instructionsMobile": "Swipe in direction character should move",
       "instructionsDesktop": "Use arrow keys to move: [ ⇠ ⇢ ]",
       "gameTopBar": true,
-      "columns": 5,
+      "lanes": 5,
       "lives": 3,
       "fontFamily": "Bungee Inline"
     },
