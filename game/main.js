@@ -53,6 +53,7 @@ import {
 } from './objects/effects.js';
 
 import Player from './characters/player.js';
+import Obstacle from './characters/obstacle.js';
 
 class Game {
 
@@ -60,6 +61,7 @@ class Game {
         this.config = config; // customization
         this.overlay = overlay;
         this.topbar = topbar;
+        this.topbar.active = config.settings.gameTopBar;
 
         this.prefix = hashCode(this.config.settings.name); // set prefix for local-storage keys
 
@@ -127,7 +129,6 @@ class Game {
             paused: false,
             muted: localStorage.getItem(this.prefix.concat('muted')) === 'true'
         };
-        // console.log(this.state);
 
         this.input = {
             active: 'keyboard',
@@ -181,6 +182,7 @@ class Game {
         // make a list of assets
         const gameAssets = [
             loadImage('playerImage', this.config.images.playerImage),
+            loadImage('obstacleImage', this.config.images.obstacleImage),
             loadImage('backgroundImage', this.config.images.backgroundImage),
             loadSound('backgroundMusic', this.config.sounds.backgroundMusic),
             loadFont('gameFont', this.config.settings.fontFamily)
@@ -215,6 +217,7 @@ class Game {
             speed: 100,
             bounds: this.screen
         });
+
 
         // set overlay styles
         this.overlay.setStyles({...this.config.colors, ...this.config.settings});
@@ -275,7 +278,24 @@ class Game {
 
             if (!this.state.muted) { this.sounds.backgroundMusic.play(); }
 
-            // test burst on click
+            // add an obstacle
+            if (this.frame.count % 200 === 0) {
+                let { obstacleImage } = this.images;
+                let obstacleSize = resize({ image: obstacleImage, width: this.state.columnSize });
+
+                this.entities.push(new Obstacle({
+                    ctx: this.ctx,
+                    image: obstacleImage,
+                    x: 2 * this.state.columnSize,
+                    y: 0,
+                    width: obstacleSize.width,
+                    height: obstacleSize.height,
+                    speed: 20,
+                    bounds: this.screen
+                }))
+            }
+
+            // update and draw effects
             for (let i = 0; i < this.effects.length; i++) {
                 let effect = this.effects[i];
 
@@ -285,6 +305,19 @@ class Game {
                 // remove in-active effects
                 if (!effect.active) {
                     this.effects.splice(i, 1);
+                }
+                
+            }
+
+            for (let i = 0; i < this.entities.length; i++) {
+                let entity = this.entities[i];
+
+                entity.move(0, 1, this.frame.scale);
+                entity.draw();
+
+                // remove in-active entity
+                if (entity.y > this.canvas.height) {
+                    this.entities.splice(i, 1);
                 }
                 
             }
@@ -363,6 +396,12 @@ class Game {
             radius: 300
         }));
 
+        /*
+        console.log('----- snapshot -----');
+        console.log(this.effects);
+        console.log(this.entities);
+        console.log(this.player);
+        */
     }
 
     handleKeyboardInput(type, code) {
@@ -379,8 +418,6 @@ class Game {
                     playerColumn: Math.max(this.state.playerColumn - 1, 0)
                 });
             }
-
-            // console.log(this.state.playerColumn);
 
             if (code === 'Space') {
 
