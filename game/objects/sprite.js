@@ -58,8 +58,8 @@ class Sprite {
 
         // target
         this.target = {
-            x: 0,
-            y: 0
+            x: null,
+            y: null
         };
 
         // bounds
@@ -72,14 +72,18 @@ class Sprite {
         let dy = y === 0 ? this.y : this.y + (y * this.speed * m);
 
         // target dx
-        dx = this.target.x != this.x ?
-            dx + ((this.target.x - this.x) / 1000 * this.speed) :
-            dx;
+        if (this.target.x != null) {
+            dx = this.target.x != this.x ?
+                dx + ((this.target.x - this.x) / 1000 * this.speed) :
+                dx;
+        }
 
         // target dy
-        dy = this.target.y != this.y ?
-            dy + ((this.target.y - this.y) / 3000 * this.speed) :
-            dy;
+        if (this.target.y != null) {
+            dy = this.target.y != this.y ?
+                dy + ((this.target.y - this.y) / 3000 * this.speed) :
+                dy;
+        }
 
         this.setX(dx);
         this.setY(dy);
