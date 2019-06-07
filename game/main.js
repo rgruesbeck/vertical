@@ -521,8 +521,20 @@ class Game {
         // get a swipe after 5 touch moves
         onSwipe(type, touch, 5, (swipe) => {
 
-            // do something with the swipe
-            this.input.swipe = swipe;
+            // swipe right
+            if (swipe.direction === 'right') {
+                this.setState({
+                    playerLane: Math.min(this.state.playerLane + 1, this.state.lanes - 1)
+                });
+            }
+
+            // swipe left
+            if (swipe.direction === 'left') {
+                this.setState({
+                    playerLane: Math.max(this.state.playerLane - 1, 0)
+                });
+            }
+
         });
     }
 

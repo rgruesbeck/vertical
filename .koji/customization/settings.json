@@ -3,7 +3,7 @@
       "name": "Game",
       "startText": "Start",
       "gameoverText": "Game Over",
-      "instructionsMobile": "Swipe in direction character should move",
+      "instructionsMobile": "Swipe left and right to avoid obstacles",
       "instructionsDesktop": "Use arrow keys to move: [ ⇠ ⇢ ]",
       "gameTopBar": true,
       "lanes": 5,
