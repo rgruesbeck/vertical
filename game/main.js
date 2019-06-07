@@ -69,6 +69,7 @@ class Game {
         this.overlay = overlay;
         this.topbar = topbar;
         this.topbar.active = config.settings.gameTopBar;
+        this.maxWidth = parseInt(config.settings.maxWidth);
 
         this.prefix = hashCode(this.config.settings.name); // set prefix for local-storage keys
 
@@ -117,7 +118,8 @@ class Game {
 
     init() {
         // set canvas
-        this.canvas.width = window.innerWidth; // set game screen width
+        // this.canvas.width = window.innerWidth; // set game screen width
+        this.canvas.width = Math.min(window.innerWidth, this.maxWidth); // set game screen width
         this.canvas.height = this.topbar.active ? window.innerHeight - this.topbar.clientHeight : window.innerHeight; // set game screen height
 
         // frame count, rate, and time

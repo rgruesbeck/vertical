@@ -3,6 +3,10 @@
     margin: 0;
 }
 
+#app {
+    width: 100vw;
+}
+
 #topBar {
     padding: 2em;
 }
@@ -20,7 +24,7 @@
 canvas {
     background: #eee;
     display: block;
-    margin: auto;
+    margin: 0 auto;
     transition: opacity 1s;
 }
 
