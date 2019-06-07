@@ -357,6 +357,8 @@ class Game {
                         n: 50,
                         x: this.player.cx,
                         y: this.player.cy,
+                        vx: [-50, 50],
+                        vy: [-5, 50],
                         burnRate: 0.1
                     });
 
@@ -366,8 +368,7 @@ class Game {
                     let blastWave = this.throttledBlastWave({
                         ctx: this.ctx,
                         x: this.player.cx,
-                        y: this.player.cy,
-                        radius: 300
+                        y: this.player.cy
                     });
 
                     blastWave && this.effects.push(blastWave);
@@ -386,7 +387,51 @@ class Game {
 
             // check for game over
             if (this.state.lives < 1) {
+                // big explosion
+                this.effects.push(
+                    new BlastWave({
+                        ctx: this.ctx,
+                        x: this.player.cx,
+                        y: this.player.cy,
+                        width: 300,
+                        hue: 360,
+                        burnRate: [200, 300]
+                    }),
+                    new BlastWave({
+                        ctx: this.ctx,
+                        x: this.player.cx,
+                        y: this.player.cy,
+                        width: 150,
+                        burnRate: [100, 200]
+                    }),
+                    new BlastWave({
+                        ctx: this.ctx,
+                        x: this.player.cx,
+                        y: this.player.cy,
+                        width: 20,
+                        burnRate: [50, 100]
+                    }),
+                    new Burst({
+                        ctx: this.ctx,
+                        n: 100,
+                        x: this.player.cx,
+                        y: this.player.cy,
+                        vx: [-50, 50],
+                        vy: [-5, 5],
+                        burnRate: 0.05
+                    }),
+                    new Burst({
+                        ctx: this.ctx,
+                        n: 25,
+                        x: this.player.cx,
+                        y: this.player.cy,
+                        vx: [-6, 6],
+                        vy: [-60, 60],
+                        burnRate: 0.025
+                    })
+                );
 
+                // game over
                 this.setState({ current: 'over' });
             }
 

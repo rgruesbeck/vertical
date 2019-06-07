@@ -13,6 +13,7 @@
  */
 
 import {
+    randomBetween,
     valueOrRange
 } from '../utils/baseUtils.js';
 
@@ -168,19 +169,19 @@ function Burst({ ctx, n = 10, x, y, vx, vy, burnRate }) {
     }
 }
 
-function BlastWave({ ctx, x, y, radius }) {
+function BlastWave({ ctx, x, y, width = 50, hue = [300, 350], burnRate = 100 }) {
     this.id = Math.random().toString(16).slice(2);
     this.type = 'blast-wave';
     this.active = true;
     this.ctx = ctx;
     this.center = { x, y };
-    this.radius = radius;
+    this.burnRate = (Array.isArray(burnRate) ? randomBetween(burnRate[0], burnRate[1]) : burnRate) / 100;
     this.waves = radialWaveEmitter({
         x: x,
         y: y,
         rd: 25,
-        width: 50,
-        hue: [300, 350],
+        width: width,
+        hue: hue,
         alpha: 1
     })
 
@@ -199,10 +200,17 @@ function BlastWave({ ctx, x, y, radius }) {
             let wave = this.waves[i];
 
             // draw waves
+            wave.rd += this.burnRate * 8;
+            wave.width -= this.burnRate / 2;
+            wave.hue -= this.burnRate;
+            wave.alpha -= this.burnRate * 0.0075;
+
+            /*
             wave.rd += 7;
             wave.width -= 0.5;
             wave.hue -= 1;
             wave.alpha -= 0.0075;
+            */
 
             // remove wave when larger than blast radius
             if (wave.width < 1) {
