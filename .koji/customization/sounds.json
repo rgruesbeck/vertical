@@ -1,21 +1,49 @@
 {
-    "sounds": {
-      "backgroundMusic": "https://objects.koji-cdn.com/2b52adad-cc35-46c3-9782-edf872c76874/button-music.mp3"
-    },
-    "@@editor": [
-      {
-        "key": "sounds",
-        "name": "Sounds",
-        "icon": "🔊️",
-        "source": "sounds.json",
-        "fields": [
-          {
-            "key": "backgroundMusic",
-            "name": "Background Music",
-            "description": "Music to loop in background",
-            "type": "sound"
-          }
-        ]
-      }
-    ]
-  }
+  "sounds": {
+    "backgroundMusic": "https://objects.koji-cdn.com/9c59feed-9d8f-4bde-8986-1ef50488d826/backgroundMusicSpace.ogg",
+    "powerUpSound": "https://objects.koji-cdn.com/9c59feed-9d8f-4bde-8986-1ef50488d826/shipPowerUp.mp3",
+    "turnSound": "https://objects.koji-cdn.com/9c59feed-9d8f-4bde-8986-1ef50488d826/scidoor.mp3",
+    "hitSound": "https://objects.koji-cdn.com/9c59feed-9d8f-4bde-8986-1ef50488d826/moonblast.mp3",
+    "gameOverSound": "https://objects.koji-cdn.com/9c59feed-9d8f-4bde-8986-1ef50488d826/subimpact.mp3"
+  },
+  "@@editor": [
+    {
+      "key": "sounds",
+      "name": "Sounds",
+      "icon": "🔊️",
+      "source": "sounds.json",
+      "fields": [
+        {
+          "key": "backgroundMusic",
+          "name": "Background Music",
+          "description": "Music to loop in background",
+          "type": "sound"
+        },
+        {
+          "key": "powerUpSound",
+          "name": "Power Up Sound",
+          "description": "Sound when ship powers up",
+          "type": "sound"
+        },
+        {
+          "key": "turnSound",
+          "name": "Turn Sound",
+          "description": "Sound when player turns",
+          "type": "sound"
+        },
+        {
+          "key": "hitSound",
+          "name": "Hit Sound",
+          "description": "Sound when player hits obstacle",
+          "type": "sound"
+        },
+        {
+          "key": "gameOverSound",
+          "name": "Game Over Sound",
+          "description": "Sound when game is over",
+          "type": "sound"
+        }
+      ]
+    }
+  ]
+}

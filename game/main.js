@@ -199,6 +199,10 @@ class Game {
             loadImage('obstacleImage', this.config.images.obstacleImage),
             loadImage('backgroundImage', this.config.images.backgroundImage),
             loadSound('backgroundMusic', this.config.sounds.backgroundMusic),
+            loadSound('powerUpSound', this.config.sounds.powerUpSound),
+            loadSound('turnSound', this.config.sounds.turnSound),
+            loadSound('hitSound', this.config.sounds.hitSound),
+            loadSound('gameOverSound', this.config.sounds.gameOverSound),
             loadFont('gameFont', this.config.settings.fontFamily)
         ];
 
@@ -351,7 +355,6 @@ class Game {
 
                     // let collisionLocation = 0;
                     // burst effect
-                    // this.effects.push(new Burst(this.ctx, 50, this.player.cx, this.player.cy, 0.1));
                     let burst = this.throttledBurst({
                         ctx: this.ctx,
                         n: 50,
@@ -371,7 +374,12 @@ class Game {
                         y: this.player.cy
                     });
 
-                    blastWave && this.effects.push(blastWave);
+                    if (blastWave) {
+                      this.effects.push(blastWave);
+
+                        this.sounds.hitSound.currentTime = 0;
+                        this.sounds.hitSound.play();
+                    }
                 }
 
                 // remove in-active entity
@@ -431,6 +439,8 @@ class Game {
                     })
                 );
 
+                this.sounds.gameOverSound.play();
+
                 // game over
                 this.setState({ current: 'over' });
             }
@@ -471,6 +481,26 @@ class Game {
         this.requestFrame(() => this.play());
     }
 
+    shiftRight() {
+        // right
+        this.setState({
+            playerLane: Math.min(this.state.playerLane + 1, this.state.lanes - 1)
+        });
+
+        this.sounds.turnSound.currentTime = 0;
+        this.sounds.turnSound.play();
+    }
+
+    shiftLeft() {
+        // left
+        this.setState({
+            playerLane: Math.max(this.state.playerLane - 1, 0)
+        });
+
+        this.sounds.turnSound.currentTime = 0;
+        this.sounds.turnSound.play();
+    }
+
     // event listeners
     handleClicks(e) {
         if (this.state.current === 'loading') { return; }
@@ -489,6 +519,11 @@ class Game {
 
         // button
         if ( target.id === 'button') {
+            // if defaulting to have sound on by default
+            // double mute() to warmup iphone audio here
+            this.mute();
+            this.mute();
+
             this.setState({ current: 'play' });
 
             // start star stream
@@ -503,10 +538,9 @@ class Game {
                 hue: [0, 70]
             }))
 
-            // if defaulting to have sound on by default
-            // double mute() to warmup iphone audio here
-            this.mute();
-            this.mute();
+            // power up sound
+            this.sounds.currentTime = 3700;
+            this.sounds.powerUpSound.play();
         }
 
         /*
@@ -522,14 +556,10 @@ class Game {
 
         if (type === 'keyup' && this.state.current === 'play') {
             if (code === 'ArrowRight') {
-                this.setState({
-                    playerLane: Math.min(this.state.playerLane + 1, this.state.lanes - 1)
-                });
+                this.shiftRight();
             }
             if (code === 'ArrowLeft') {
-                this.setState({
-                    playerLane: Math.max(this.state.playerLane - 1, 0)
-                });
+                this.shiftLeft();
             }
 
             if (code === 'Space') {
@@ -565,21 +595,17 @@ class Game {
 
     // handle swipe
     handleSwipe(type, touch) {
-        // get a swipe after 5 touch moves
-        onSwipe(type, touch, 5, (swipe) => {
+        // get a swipe after 2 touch moves
+        onSwipe(type, touch, 2, (swipe) => {
 
             // swipe right
             if (swipe.direction === 'right') {
-                this.setState({
-                    playerLane: Math.min(this.state.playerLane + 1, this.state.lanes - 1)
-                });
+                this.shiftRight();
             }
 
             // swipe left
             if (swipe.direction === 'left') {
-                this.setState({
-                    playerLane: Math.max(this.state.playerLane - 1, 0)
-                });
+                this.shiftLeft();
             }
 
         });
