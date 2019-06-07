@@ -118,7 +118,7 @@ function StarStream({ ctx, n = 1, x, y, vx, vy, rd, hue }) {
     }
 }
 
-function Burst(ctx, n = 10, x, y, burnRate) {
+function Burst({ ctx, n = 10, x, y, vx, vy, burnRate }) {
     this.id = Math.random().toString(16).slice(2);
     this.type = 'burst';
     this.active = true;
@@ -129,8 +129,8 @@ function Burst(ctx, n = 10, x, y, burnRate) {
         n: n,
         x: x,
         y: y,
-        vx: [-10, 10],
-        vy: [-10, 10],
+        vx: vx || [-10, 10],
+        vy: vy || [-10, 10],
         rd: [2, 4],
         hue: [200, 300]
     });

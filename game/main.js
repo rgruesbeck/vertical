@@ -35,7 +35,9 @@ import {
 } from './helpers/assetLoaders.js';
 
 import {
-    hashCode
+    hashCode,
+    randomBetween,
+    throttled
 } from './utils/baseUtils.js';
 
 import {
@@ -43,7 +45,11 @@ import {
 } from './utils/imageUtils.js';
 
 import {
-    onSwipe, canvasInputPosition
+    getDistance
+} from './utils/spriteUtils.js';
+
+import {
+    onSwipe
 } from './utils/inputUtils.js';
 
 import {
@@ -54,6 +60,7 @@ import {
 
 import Player from './characters/player.js';
 import Obstacle from './characters/obstacle.js';
+import { collideDistance } from './utils/spriteUtils.js';
 
 class Game {
 
@@ -67,6 +74,11 @@ class Game {
 
         this.canvas = canvas; // game screen
         this.ctx = canvas.getContext("2d"); // game screen context
+
+        // setup throttled functions
+        this.decrementLife = throttled(1200, () => this.state.lives -= 1);
+        this.throttledBlastWave = throttled(600, (bw) => new BlastWave(bw));
+        this.throttledBurst = throttled(300, (br) => new Burst(br));
 
         // setup event listeners
         // handle keyboard events
@@ -279,20 +291,33 @@ class Game {
             if (!this.state.muted) { this.sounds.backgroundMusic.play(); }
 
             // add an obstacle
-            if (this.frame.count % 200 === 0) {
-                let { obstacleImage } = this.images;
-                let obstacleSize = resize({ image: obstacleImage, width: this.state.laneSize });
+            if (this.frame.count % 120 === 0 || this.entities.length < 5) {
+                // pick a random lane/location
+                let obstacleLane = randomBetween(0, this.state.lanes, true);
+                let location = { x: this.state.laneSize * obstacleLane, y: -200 };
 
-                this.entities.push(new Obstacle({
-                    ctx: this.ctx,
-                    image: obstacleImage,
-                    x: 2 * this.state.laneSize,
-                    y: 0,
-                    width: obstacleSize.width,
-                    height: obstacleSize.height,
-                    speed: 20,
-                    bounds: this.screen
-                }))
+                // ignore crowded locations
+                let inValidLocation = this.entities.some((ent) => {
+                    return getDistance(ent, location) < this.state.laneSize * 2;
+                });
+
+                if (!inValidLocation) {
+                    // add new obstacle
+                    let { obstacleImage } = this.images;
+                    let obstacleSize = resize({ image: obstacleImage, width: this.state.laneSize });
+
+                    this.entities.push(new Obstacle({
+                        ctx: this.ctx,
+                        image: obstacleImage,
+                        lane: obstacleLane,
+                        x: location.x,
+                        y: location.y,
+                        width: obstacleSize.width,
+                        height: obstacleSize.height,
+                        speed: 20,
+                        bounds: this.screen
+                    }))
+                }
             }
 
             // update and draw effects
@@ -315,11 +340,52 @@ class Game {
                 entity.move(0, 1, this.frame.scale);
                 entity.draw();
 
+                // check for player collisions
+                if (entity.lane === this.state.playerLane && collideDistance(entity, this.player)) {
+                    // handle collision
+
+                    // decrement life
+                    this.decrementLife();
+
+                    // let collisionLocation = 0;
+                    // burst effect
+                    // this.effects.push(new Burst(this.ctx, 50, this.player.cx, this.player.cy, 0.1));
+                    let burst = this.throttledBurst({
+                        ctx: this.ctx,
+                        n: 50,
+                        x: this.player.cx,
+                        y: this.player.cy,
+                        burnRate: 0.1
+                    });
+
+                    burst && this.effects.push(burst);
+
+                    // blast effect
+                    let blastWave = this.throttledBlastWave({
+                        ctx: this.ctx,
+                        x: this.player.cx,
+                        y: this.player.cy,
+                        radius: 300
+                    });
+
+                    blastWave && this.effects.push(blastWave);
+                }
+
                 // remove in-active entity
                 if (entity.y > this.canvas.height) {
                     this.entities.splice(i, 1);
+
+                    // add points
+                    this.state.score += 3;
                 }
                 
+            }
+
+
+            // check for game over
+            if (this.state.lives < 1) {
+
+                this.setState({ current: 'over' });
             }
 
             // player bounce
@@ -330,15 +396,27 @@ class Game {
             this.player.draw();
         }
 
-        // player wins
-        if (this.state.current === 'win') {
-            // win code
-
-        }
-
         // game over
         if (this.state.current === 'over') {
             // game over code
+
+            // update and draw effects
+            for (let i = 0; i < this.effects.length; i++) {
+                let effect = this.effects[i];
+
+                // run effect tick
+                effect.tick();
+
+                // remove in-active effects
+                if (!effect.active) {
+                    this.effects.splice(i, 1);
+                }
+                
+            }
+
+            if (this.effects.length === 1) {
+                this.load();
+            }
 
         }
 
@@ -373,7 +451,7 @@ class Game {
                 x: [0, this.canvas.width],
                 y: 0,
                 vx: 0,
-                vy: 15,
+                vy: 20, // game background speed
                 rd: [2, 7],
                 hue: [0, 70]
             }))
@@ -383,18 +461,6 @@ class Game {
             this.mute();
             this.mute();
         }
-
-        // test burst
-        let location = canvasInputPosition(this.canvas, e)
-        this.effects.push(new Burst(this.ctx, 50, location.x, location.y, 0.1));
-
-        // test blast wave
-        this.effects.push(new BlastWave({
-            ctx: this.ctx,
-            x: location.x,
-            y: location.y,
-            radius: 300
-        }));
 
         /*
         console.log('----- snapshot -----');

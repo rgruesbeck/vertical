@@ -16,21 +16,7 @@ import ImageSprite from '../objects/imageSprite.js';
 class Player extends ImageSprite {
     constructor(options) {
         super(options);
-    }
 
-    collisionsWith(entities) {
-        let result = Object.entries(entities)
-        .find((ent) => { return this.collidesWith(ent[1]); })
-        ? true : false;
-
-        return result;
-    }
-
-    collidesWith(entity) {
-        let vx = entity.cx - this.cx;
-        let vy = entity.cy - this.cy;
-        let distance = Math.sqrt(vx * vx + vy * vy);
-        return distance < (entity.radius + this.radius);
     }
 }
 
