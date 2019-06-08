@@ -205,13 +205,6 @@ function BlastWave({ ctx, x, y, width = 50, hue = [300, 350], burnRate = 100 }) 
             wave.hue -= this.burnRate;
             wave.alpha -= this.burnRate * 0.0075;
 
-            /*
-            wave.rd += 7;
-            wave.width -= 0.5;
-            wave.hue -= 1;
-            wave.alpha -= 0.0075;
-            */
-
             // remove wave when larger than blast radius
             if (wave.width < 1) {
                 this.waves.splice(i, 1);

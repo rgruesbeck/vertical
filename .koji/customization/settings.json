@@ -7,6 +7,7 @@
       "instructionsDesktop": "Use arrow keys to move: [ ⇠ ⇢ ]",
       "gameTopBar": true,
       "maxWidth": 740,
+      "gameSpeed": 25,
       "lanes": 5,
       "lives": 3,
       "fontFamily": "Bungee Inline"

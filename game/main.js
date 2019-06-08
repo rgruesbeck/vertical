@@ -138,6 +138,7 @@ class Game {
             lanes: parseInt(this.config.settings.lanes),
             playerLane: parseInt(this.config.settings.lanes) /  2 >> 0,
             laneSize: Math.floor(this.canvas.width / parseInt(this.config.settings.lanes)),
+            gameSpeed: parseInt(this.config.settings.gameSpeed),
             score: 0,
             lives: parseInt(this.config.settings.lives),
             paused: false,
@@ -183,7 +184,6 @@ class Game {
         // set loading indicator to textColor
         document.querySelector('#loading').style.color = this.config.colors.textColor;
 
-
     }
 
     load() {
@@ -191,8 +191,8 @@ class Game {
     
         if (this.sounds && this.sounds.backgroundMusic) { this.sounds.backgroundMusic.pause(); } // stop background music when re-loading
 
-        this.init(); // apply new configs
-        
+        this.init();
+
         // make a list of assets
         const gameAssets = [
             loadImage('playerImage', this.config.images.playerImage),
@@ -262,7 +262,8 @@ class Game {
         // ready to play
         if (this.state.current === 'ready') {
 
-            if (this.state.prev === 'loading') {
+            // dispaly menu after loading or game over
+            if (this.state.prev.match(/loading|over/)) {
                 this.overlay.hide('loading');
                 this.canvas.style.opacity = 1;
 
@@ -281,8 +282,6 @@ class Game {
                 this.setState({ current: 'ready' });
             }
 
-            // dev only
-            // this.setState({ current: 'play' });
         }
 
         // game play
@@ -292,6 +291,22 @@ class Game {
             // hide overlay items
             if (this.state.prev === 'ready') {
                 this.overlay.hide(['banner', 'button', 'instructions'])
+
+                // start star stream
+                this.effects.push(new StarStream({
+                    ctx: this.ctx,
+                    n: 200,
+                    x: [0, this.canvas.width],
+                    y: 0,
+                    vx: 0,
+                    vy: this.state.gameSpeed, // game background speed
+                    rd: [2, 7],
+                    hue: [0, 70]
+                }))
+
+                // power up sound
+                this.sounds.powerUpSound.play();
+                this.setState({ current: 'play' });
             }
 
             if (!this.state.muted) { this.sounds.backgroundMusic.play(); }
@@ -320,7 +335,7 @@ class Game {
                         y: location.y,
                         width: obstacleSize.width,
                         height: obstacleSize.height,
-                        speed: 20,
+                        speed: this.state.gameSpeed,
                         bounds: this.screen
                     }))
                 }
@@ -387,7 +402,11 @@ class Game {
                     this.entities.splice(i, 1);
 
                     // add points
-                    this.state.score += 3;
+                    // increase game speed
+                    this.setState({
+                        score: this.state.score + (this.state.gameSpeed / 20) >> 0,
+                        gameSpeed: this.state.gameSpeed + 0.1 
+                    });
                 }
                 
             }
@@ -472,7 +491,7 @@ class Game {
             }
 
             if (this.effects.length === 1) {
-                this.load();
+                setTimeout(this.load(), 2000);
             }
 
         }
@@ -525,22 +544,6 @@ class Game {
             this.mute();
 
             this.setState({ current: 'play' });
-
-            // start star stream
-            this.effects.push(new StarStream({
-                ctx: this.ctx,
-                n: 200,
-                x: [0, this.canvas.width],
-                y: 0,
-                vx: 0,
-                vy: 20, // game background speed
-                rd: [2, 7],
-                hue: [0, 70]
-            }))
-
-            // power up sound
-            this.sounds.currentTime = 3700;
-            this.sounds.powerUpSound.play();
         }
 
         /*
@@ -575,7 +578,7 @@ class Game {
 
         // reload on game over
         if (type === 'keydown' && this.state.current === 'over') {
-            this.load();
+            this.effects.length === 1 && this.load();
         }
 
     }

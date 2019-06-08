@@ -2,6 +2,8 @@
   "colors": {
     "textColor": "#012270",
     "primaryColor": "#fdec8e",
+    "burstColor": "#fdec8e",
+    "blastWaveColor": "#fdec8e",
     "backgroundColor": "#e45ba0"
   },
   "@@editor": [
