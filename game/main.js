@@ -49,7 +49,7 @@ import {
 } from './utils/spriteUtils.js';
 
 import {
-    onSwipe
+    canvasInputPosition
 } from './utils/inputUtils.js';
 
 import {
@@ -86,19 +86,11 @@ class Game {
         document.addEventListener('keydown', ({ code }) => this.handleKeyboardInput('keydown', code));
         document.addEventListener('keyup', ({ code }) => this.handleKeyboardInput('keyup', code));
 
-        // setup event listeners for mouse movement
-        document.addEventListener('mousemove', ({ clientY }) => this.handleMouseMove(clientY));
-
-        // setup event listeners for mouse movement
-        document.addEventListener('touchmove', ({ touches }) => this.handleTouchMove(touches[0]));
+        // handle taps
+        document.addEventListener('touchstart', (e) => this.handleTap(e));
 
         // handle overlay clicks
         this.overlay.root.addEventListener('click', (e) => this.handleClicks(e));
-
-        // handle swipes
-        document.addEventListener('touchstart', ({ touches }) => this.handleSwipe('touchstart', touches[0]));
-        document.addEventListener('touchmove', ({ touches }) => this.handleSwipe('touchmove', touches[0]));
-        document.addEventListener('touchend', ({ touches }) => this.handleSwipe('touchend', touches[0]));
 
         // handle resize events
         window.addEventListener('resize', () => this.handleResize());
@@ -232,7 +224,7 @@ class Game {
             y: top,
             width: playerSize.width,
             height: playerSize.height,
-            speed: 100,
+            speed: 70,
             bounds: this.screen
         });
 
@@ -404,7 +396,7 @@ class Game {
                     // add points
                     // increase game speed
                     this.setState({
-                        score: this.state.score + (this.state.gameSpeed / 20) >> 0,
+                        score: Math.floor(this.state.score + (this.state.gameSpeed / 20)),
                         gameSpeed: this.state.gameSpeed + 0.1 
                     });
                 }
@@ -557,11 +549,22 @@ class Game {
     handleKeyboardInput(type, code) {
         this.input.active = 'keyboard';
 
+        if (type === 'keydown' && this.state.current === 'play') {
+            if (code === 'ArrowRight') {
+                this.input.keyboard.right = true;
+            }
+            if (code === 'ArrowLeft') {
+                this.input.keyboard.left = true;
+            }
+        }
+
         if (type === 'keyup' && this.state.current === 'play') {
             if (code === 'ArrowRight') {
+                this.input.keyboard.right = false;
                 this.shiftRight();
             }
             if (code === 'ArrowLeft') {
+                this.input.keyboard.left = false;
                 this.shiftLeft();
             }
 
@@ -583,35 +586,21 @@ class Game {
 
     }
 
-    handleMouseMove(y) {
-        this.input.active = 'mouse';
-        this.input.mouse.y = y;
-    }
+    handleTap(e) {
+        // ignore for first 1 second
+        if (this.frame.count < 60) { return; }
 
-    handleTouchMove(touch) {
-        let { clientX, clientY } = touch;
+        // shift right for right of player taps
+        // shift left for left of player taps
+        let location = canvasInputPosition(this.canvas, e.touches[0]);
 
-        this.input.active = 'touch';
-        this.input.touch.x = clientX;
-        this.input.touch.y = clientY;
-    }
+        if (location.x > this.player.x) {
+            this.shiftRight();
+        }
 
-    // handle swipe
-    handleSwipe(type, touch) {
-        // get a swipe after 2 touch moves
-        onSwipe(type, touch, 2, (swipe) => {
-
-            // swipe right
-            if (swipe.direction === 'right') {
-                this.shiftRight();
-            }
-
-            // swipe left
-            if (swipe.direction === 'left') {
-                this.shiftLeft();
-            }
-
-        });
+        if (location.x < this.player.x) {
+            this.shiftLeft();
+        }
     }
 
     handleResize() {

@@ -81,7 +81,7 @@ class Sprite {
         // target dy
         if (this.target.y != null) {
             dy = this.target.y != this.y ?
-                dy + ((this.target.y - this.y) / 3000 * this.speed) :
+                dy + ((this.target.y - this.y) / 1000 * this.speed) :
                 dy;
         }
 
