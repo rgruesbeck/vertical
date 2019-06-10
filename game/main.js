@@ -279,7 +279,7 @@ class Game {
         // ready to play
         if (this.state.current === 'ready') {
 
-            // dispaly menu after loading or game over
+            // display menu after loading or game over
             if (this.state.prev.match(/loading|over/)) {
                 this.overlay.hide('loading');
                 this.canvas.style.opacity = 1;
@@ -329,7 +329,10 @@ class Game {
             if (!this.state.muted) { this.sounds.backgroundMusic.play(); }
 
             // add an obstacle
-            if (this.frame.count % 120 === 0 || this.entities.length < 5) {
+            let shouldAddObstacle = this.frame.count % 120 === 0 || // 2 seconds have gone by
+            this.entities.length < Math.min(this.frame.count / 300, 6); // less than some number of obstacles ( max is 6 )
+
+            if (shouldAddObstacle) {
                 // pick a location
                 let obstacleLane = randomBetween(0, this.state.lanes - 1, true);
                 let location = {
@@ -341,7 +344,7 @@ class Game {
 
                 // ignore crowded locations
                 let inValidLocation = this.entities.some((ent) => {
-                    return getDistance(ent, location) < this.playerSize.width * 5;
+                    return getDistance(ent, location) < this.playerSize.width * 3;
                 });
 
 

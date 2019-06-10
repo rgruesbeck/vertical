@@ -6,7 +6,7 @@
     "instructionsMobile": "Swipe left and right to avoid obstacles",
     "instructionsDesktop": "Use arrow keys to move: [ ⇠ ⇢ ]",
     "gameTopBar": true,
-    "playStyle": "openplay",
+    "playStyle": "laneplay",
     "gameSpeed": 50,
     "lives": 3,
     "fontFamily": "Bungee Inline"
