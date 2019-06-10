@@ -1,0 +1,22 @@
+{
+    "openplay": {
+        "playerSize": 150,
+        "obstacleSize": 150 
+    },
+    "@@editor": [{
+        "key": "openplay",
+        "name": "Open Play",
+        "icon": "🎮",
+        "source": "openplay.json",
+        "fields": [
+            {
+                "key": "playerSize",
+                "name": "Size of player"
+            },
+            {
+                "key": "obstacleSize",
+                "name": "Size of obstacles"
+            }
+        ]
+    }]
+}

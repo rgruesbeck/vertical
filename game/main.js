@@ -66,10 +66,17 @@ class Game {
 
     constructor(canvas, overlay, topbar, config) {
         this.config = config; // customization
-        this.overlay = overlay;
+        this.overlay = overlay; // overlay
+
+        // set topbar
         this.topbar = topbar;
         this.topbar.active = config.settings.gameTopBar;
-        this.maxWidth = parseInt(config.settings.maxWidth);
+
+        // set playstyle: lanes or open
+        this.playStyle = config.settings.playStyle;
+        this.gamePlay = {
+            ...config[this.playStyle]
+        };
 
         this.prefix = hashCode(this.config.settings.name); // set prefix for local-storage keys
 
@@ -87,7 +94,8 @@ class Game {
         document.addEventListener('keyup', ({ code }) => this.handleKeyboardInput('keyup', code));
 
         // handle taps
-        document.addEventListener('touchstart', (e) => this.handleTap(e));
+        document.addEventListener('touchstart', (e) => this.handleTap('start', e));
+        document.addEventListener('touchend', (e) => this.handleTap('end', e));
 
         // handle overlay clicks
         this.overlay.root.addEventListener('click', (e) => this.handleClicks(e));
@@ -111,7 +119,7 @@ class Game {
     init() {
         // set canvas
         // this.canvas.width = window.innerWidth; // set game screen width
-        this.canvas.width = Math.min(window.innerWidth, this.maxWidth); // set game screen width
+        this.canvas.width = this.gamePlay.maxWidth ? Math.min(window.innerWidth, this.gamePlay.maxWidth) : window.innerWidth; // set game screen width
         this.canvas.height = this.topbar.active ? window.innerHeight - this.topbar.clientHeight : window.innerHeight; // set game screen height
 
         // frame count, rate, and time
@@ -127,9 +135,9 @@ class Game {
         this.state = {
             current: 'loading',
             prev: '',
-            lanes: parseInt(this.config.settings.lanes),
-            playerLane: parseInt(this.config.settings.lanes) /  2 >> 0,
-            laneSize: Math.floor(this.canvas.width / parseInt(this.config.settings.lanes)),
+            lanes: this.gamePlay.lanes ? parseInt(this.gamePlay.lanes) : null,
+            playerLane: this.gamePlay.lanes ? parseInt(this.gamePlay.lanes) /  2 >> 0 : null,
+            laneSize: this.gamePlay.lanes ? Math.floor(this.canvas.width / parseInt(this.gamePlay.lanes)) : null,
             gameSpeed: parseInt(this.config.settings.gameSpeed),
             score: 0,
             lives: parseInt(this.config.settings.lives),
@@ -138,10 +146,8 @@ class Game {
         };
 
         this.input = {
-            active: 'keyboard',
-            keyboard: { up: false, right: false, left: false, down: false },
-            mouse: { x: 0, y: 0, click: false },
-            touch: { x: 0, y: 0 },
+            left: false,
+            right: false
         };
 
         this.images = {}; // place to keep images
@@ -167,7 +173,9 @@ class Game {
             right: this.canvas.width,
             centerX: this.canvas.width / 2,
             centerY: this.canvas.height / 2,
-            scale: ((this.canvas.width + this.canvas.height) / 2) * 0.003
+            scale: ((this.canvas.width + this.canvas.height) / 2) / 1000,
+            scaleWidth: (this.canvas.width / 2) / 1000,
+            scaleHeight: (this.canvas.height / 2) / 1000
         };
 
         // set document body to backgroundColor
@@ -211,23 +219,40 @@ class Game {
 
     create() {
         // create game characters
-
         const { top } = this.screen;
-        const { playerImage } = this.images;
+        const { playerImage, obstacleImage } = this.images;
 
-        let playerSize = resize({ image: playerImage, width: this.state.laneSize });
+        // set player size for open and lane style game play
+        let playerWidthLanes = this.state.laneSize;
+        let playerWidthOpen = this.gamePlay.playerSize * this.screen.scaleHeight;
+        this.playerSize = resize({
+            image: playerImage,
+            width: this.gamePlay.lanes ? playerWidthLanes : playerWidthOpen
+        });
+
+
+        let playerX = this.gamePlay.lanes ?
+        this.state.playerLane * this.state.laneSize :
+        this.screen.centerX;
 
         this.player = new Player({
             ctx: this.ctx,
             image: playerImage,
-            x: this.state.playerLane * this.state.laneSize,
+            x: playerX,
             y: top,
-            width: playerSize.width,
-            height: playerSize.height,
-            speed: 70,
+            width: this.playerSize.width,
+            height: this.playerSize.height,
+            speed: this.playerSize.width,
             bounds: this.screen
         });
 
+        // set obstacle size for open and lane style game play
+        let obstacleWidthLanes = this.state.laneSize;
+        let obstacleWidthOpen = this.gamePlay.obstacleSize * this.screen.scaleHeight;
+        this.obstacleSize = resize({
+            image: obstacleImage,
+            width: this.gamePlay.lanes ? obstacleWidthLanes : obstacleWidthOpen
+        });
 
         // set overlay styles
         this.overlay.setStyles({...this.config.colors, ...this.config.settings});
@@ -305,24 +330,33 @@ class Game {
 
             // add an obstacle
             if (this.frame.count % 120 === 0 || this.entities.length < 5) {
-                // pick a random lane/location
-                let obstacleLane = randomBetween(0, this.state.lanes, true);
-                let location = { x: this.state.laneSize * obstacleLane, y: -200 };
+                // pick a location
+                let obstacleLane = randomBetween(0, this.state.lanes - 1, true);
+                let location = {
+                    x: this.gamePlay.lanes ?
+                    this.state.laneSize * obstacleLane :
+                    randomBetween(0, this.screen.right - this.obstacleSize.width, true),
+                    y: -200
+                };
 
                 // ignore crowded locations
                 let inValidLocation = this.entities.some((ent) => {
-                    return getDistance(ent, location) < this.state.laneSize * 2;
+                    return getDistance(ent, location) < this.playerSize.width * 5;
                 });
+
 
                 if (!inValidLocation) {
                     // add new obstacle
                     let { obstacleImage } = this.images;
-                    let obstacleSize = resize({ image: obstacleImage, width: this.state.laneSize });
+                    let obstacleSize = resize({
+                        image: obstacleImage,
+                        width: this.gamePlay.lanes ? this.state.laneSize : this.obstacleSize.width
+                    });
 
                     this.entities.push(new Obstacle({
                         ctx: this.ctx,
                         image: obstacleImage,
-                        lane: obstacleLane,
+                        lane: this.gamePlay.lanes ? obstacleLane : null,
                         x: location.x,
                         y: location.y,
                         width: obstacleSize.width,
@@ -354,13 +388,16 @@ class Game {
                 entity.draw();
 
                 // check for player collisions
-                if (entity.lane === this.state.playerLane && collideDistance(entity, this.player)) {
+                let collision = this.gamePlay.lanes ?
+                entity.lane === this.state.playerLane && collideDistance(entity, this.player) :
+                collideDistance(entity, this.player);
+
+                if (collision) {
                     // handle collision
 
                     // decrement life
                     this.decrementLife();
 
-                    // let collisionLocation = 0;
                     // burst effect
                     let burst = this.throttledBurst({
                         ctx: this.ctx,
@@ -459,8 +496,21 @@ class Game {
             // player bounce
             let dy = Math.cos(this.frame.count / 5) / 30;
 
-            this.player.move(0, dy, this.frame.scale);
-            this.player.moveTo(this.state.playerLane * this.state.laneSize, this.screen.bottom - this.player.height); 
+            // move player: open play
+            let { left, right } = this.input;
+            let opendx = this.gamePlay.lanes ?
+            0 : (left ? -1 : 0) + (right ? 1 : 0);
+
+            // move player: lane play
+            let lanedx = this.gamePlay.lanes ?
+            this.state.playerLane * this.state.laneSize : null;
+
+            // apply movement
+            this.player.move(opendx, dy, this.frame.scale);
+            this.player.moveTo({
+                x: lanedx,
+                y: this.screen.bottom - this.player.height
+            }); 
             this.player.draw();
         }
 
@@ -547,24 +597,22 @@ class Game {
     }
 
     handleKeyboardInput(type, code) {
-        this.input.active = 'keyboard';
-
         if (type === 'keydown' && this.state.current === 'play') {
             if (code === 'ArrowRight') {
-                this.input.keyboard.right = true;
+                this.input.right = true;
             }
             if (code === 'ArrowLeft') {
-                this.input.keyboard.left = true;
+                this.input.left = true;
             }
         }
 
         if (type === 'keyup' && this.state.current === 'play') {
             if (code === 'ArrowRight') {
-                this.input.keyboard.right = false;
+                this.input.right = false;
                 this.shiftRight();
             }
             if (code === 'ArrowLeft') {
-                this.input.keyboard.left = false;
+                this.input.left = false;
                 this.shiftLeft();
             }
 
@@ -586,20 +634,29 @@ class Game {
 
     }
 
-    handleTap(e) {
+    handleTap(type, e) {
         // ignore for first 1 second
         if (this.frame.count < 60) { return; }
 
         // shift right for right of player taps
         // shift left for left of player taps
-        let location = canvasInputPosition(this.canvas, e.touches[0]);
+        if (type === 'start') {
+            let location = canvasInputPosition(this.canvas, e.touches[0]);
 
-        if (location.x > this.player.x) {
-            this.shiftRight();
+            if (location.x > this.player.x) {
+                this.input.right = true;
+                this.shiftRight();
+            }
+
+            if (location.x < this.player.x) {
+                this.input.left = true;
+                this.shiftLeft();
+            }
         }
 
-        if (location.x < this.player.x) {
-            this.shiftLeft();
+        if (type === 'end') {
+            this.input.right = false;
+            this.input.left = false;
         }
     }
 

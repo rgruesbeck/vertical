@@ -74,14 +74,14 @@ class Sprite {
         // target dx
         if (this.target.x != null) {
             dx = this.target.x != this.x ?
-                dx + ((this.target.x - this.x) / 1000 * this.speed) :
+                dx + ((this.target.x - this.x) / 100 * this.speed * m) :
                 dx;
         }
 
         // target dy
         if (this.target.y != null) {
             dy = this.target.y != this.y ?
-                dy + ((this.target.y - this.y) / 1000 * this.speed) :
+                dy + ((this.target.y - this.y) / 100 * this.speed * m) :
                 dy;
         }
 
@@ -97,7 +97,7 @@ class Sprite {
         }
     }
 
-    moveTo(x = this.target.x, y = this.target.y) {
+    moveTo({ x = this.target.x, y = this.target.y }) {
         this.target = {
             ...this.target,
             ...{

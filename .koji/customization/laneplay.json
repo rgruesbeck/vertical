@@ -1,0 +1,24 @@
+{
+    "laneplay": {
+      "maxWidth": 740,
+      "lanes": 5
+    },
+    "@@editor": [
+      {
+        "key": "laneplay",
+        "name": "Lane Play",
+        "icon": "🎮",
+        "source": "laneplay.json",
+        "fields": [
+          {
+            "key": "maxWidth",
+            "name": "Max width on large screens"
+          },
+          {
+            "key": "lanes",
+            "name": "How many lanes on the screen"
+          }
+        ]
+      }
+    ]
+  }

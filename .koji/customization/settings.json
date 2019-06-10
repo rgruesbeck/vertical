@@ -1,68 +1,60 @@
 {
-    "settings": {
-      "name": "Game",
-      "startText": "Start",
-      "gameoverText": "Game Over",
-      "instructionsMobile": "Swipe left and right to avoid obstacles",
-      "instructionsDesktop": "Use arrow keys to move: [ ⇠ ⇢ ]",
-      "gameTopBar": true,
-      "maxWidth": 740,
-      "gameSpeed": 25,
-      "lanes": 5,
-      "lives": 3,
-      "fontFamily": "Bungee Inline"
-    },
-    "@@editor": [
+  "settings": {
+    "name": "Game",
+    "startText": "Start",
+    "gameoverText": "Game Over",
+    "instructionsMobile": "Swipe left and right to avoid obstacles",
+    "instructionsDesktop": "Use arrow keys to move: [ ⇠ ⇢ ]",
+    "gameTopBar": true,
+    "playStyle": "openplay",
+    "gameSpeed": 50,
+    "lives": 3,
+    "fontFamily": "Bungee Inline"
+  },
+  "@@editor": [{
+    "key": "settings",
+    "name": "Game settings",
+    "icon": "🎮",
+    "source": "settings.json",
+    "fields": [{
+        "key": "name",
+        "name": "App name",
+        "type": "text"
+      },
       {
-        "key": "settings",
-        "name": "Game settings",
-        "icon": "🎮",
-        "source": "settings.json",
-        "fields": [
-          {
-            "key": "name",
-            "name": "App name",
-            "type": "text"
-          },
-          {
-            "key": "startText",
-            "name": "Start Button Text",
-            "type": "text"
-          },
-          {
-            "key": "gameoverText",
-            "name": "Text to show when game over",
-            "type": "text"
-          },
-          {
-            "key": "instructionsMobile",
-            "name": "How to play the game on mobile",
-            "type": "text"
-          },
-          {
-            "key": "instructionsDesktop",
-            "name": "How to play the game on desktop",
-            "type": "text"
-          },
-          {
-            "key": "gameTopBar",
-            "name": "If game should have a top bar or not",
-            "type": "boolean"
-          },
-          {
-            "key": "maxWidth",
-            "name": "Max width on large screens"
-          },
-          {
-            "key": "lives",
-            "name": "How many lives a character has"
-          },
-          {
-            "key": "fontFamily",
-            "name": "Font to use for text in the game",
-            "type": "font"
-          }
-        ]
+        "key": "startText",
+        "name": "Start Button Text",
+        "type": "text"
+      },
+      {
+        "key": "gameoverText",
+        "name": "Text to show when game over",
+        "type": "text"
+      },
+      {
+        "key": "instructionsMobile",
+        "name": "How to play the game on mobile",
+        "type": "text"
+      },
+      {
+        "key": "instructionsDesktop",
+        "name": "How to play the game on desktop",
+        "type": "text"
+      },
+      {
+        "key": "gameTopBar",
+        "name": "If game should have a top bar or not",
+        "type": "boolean"
+      },
+      {
+        "key": "lives",
+        "name": "How many lives a character has"
+      },
+      {
+        "key": "fontFamily",
+        "name": "Font to use for text in the game",
+        "type": "font"
       }
     ]
-  }
+  }]
+}
