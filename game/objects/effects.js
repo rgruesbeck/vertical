@@ -105,7 +105,7 @@ function StarStream({ ctx, n = 1, x, y, vx, vy, rd, color }) {
 
             // update size and color
             star.rd = Math.abs(star.rd - 0.025);
-            star.hue -= 0.25;
+            star.hue -= 0.01;
             star.alpha += 0.050;
 
             // remove offscreen stars
@@ -202,7 +202,6 @@ function BlastWave({ ctx, x, y, width = 50, color, burnRate = 100 }) {
         hue: this.color.hsl[0],
         alpha: 1
     })
-    
 
     this.tick = () => {
         // only tick if active
@@ -221,7 +220,7 @@ function BlastWave({ ctx, x, y, width = 50, color, burnRate = 100 }) {
             // draw waves
             wave.rd += this.burnRate * 8;
             wave.width -= this.burnRate / 2;
-            wave.hue -= this.burnRate;
+            wave.hue -= this.burnRate / 2;
             wave.alpha -= this.burnRate * 0.0075;
 
             // remove wave when larger than blast radius

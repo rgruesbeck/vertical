@@ -3,6 +3,10 @@
     margin: 0;
 }
 
+body {
+    user-select: none;
+}
+
 #app {
     width: 100vw;
 }
