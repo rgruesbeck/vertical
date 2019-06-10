@@ -316,9 +316,9 @@ class Game {
                     x: [0, this.canvas.width],
                     y: 0,
                     vx: 0,
-                    vy: this.state.gameSpeed, // game background speed
-                    rd: [2, 7],
-                    hue: [0, 70]
+                    vy: this.state.gameSpeed / 3, // game background speed
+                    rd: [2, 6],
+                    color: this.config.colors.starStreamColor
                 }))
 
                 // power up sound
@@ -409,6 +409,7 @@ class Game {
                         y: this.player.cy,
                         vx: [-50, 50],
                         vy: [-5, 50],
+                        color: this.config.colors.burstColor,
                         burnRate: 0.1
                     });
 
@@ -418,7 +419,8 @@ class Game {
                     let blastWave = this.throttledBlastWave({
                         ctx: this.ctx,
                         x: this.player.cx,
-                        y: this.player.cy
+                        y: this.player.cy,
+                        color: this.config.colors.blastWaveColor
                     });
 
                     if (blastWave) {
@@ -453,7 +455,7 @@ class Game {
                         x: this.player.cx,
                         y: this.player.cy,
                         width: 300,
-                        hue: 360,
+                        color: this.config.colors.blastWaveColor,
                         burnRate: [200, 300]
                     }),
                     new BlastWave({
@@ -461,6 +463,7 @@ class Game {
                         x: this.player.cx,
                         y: this.player.cy,
                         width: 150,
+                        color: this.config.colors.blastWaveColor,
                         burnRate: [100, 200]
                     }),
                     new BlastWave({
@@ -468,6 +471,7 @@ class Game {
                         x: this.player.cx,
                         y: this.player.cy,
                         width: 20,
+                        color: this.config.colors.blastWaveColor,
                         burnRate: [50, 100]
                     }),
                     new Burst({
@@ -477,6 +481,7 @@ class Game {
                         y: this.player.cy,
                         vx: [-50, 50],
                         vy: [-5, 5],
+                        color: this.config.colors.burstColor,
                         burnRate: 0.05
                     }),
                     new Burst({
@@ -486,6 +491,7 @@ class Game {
                         y: this.player.cy,
                         vx: [-6, 6],
                         vy: [-60, 60],
+                        color: this.config.colors.burstColor,
                         burnRate: 0.025
                     })
                 );

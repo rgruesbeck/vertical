@@ -12,6 +12,8 @@
  * 
  */
 
+ import colorConvert from 'color-convert';
+
 import {
     randomBetween,
     valueOrRange
@@ -57,7 +59,7 @@ const drawWave = (ctx, w) => {
     ctx.stroke();
 }
 
-function StarStream({ ctx, n = 1, x, y, vx, vy, rd, hue }) {
+function StarStream({ ctx, n = 1, x, y, vx, vy, rd, color }) {
     this.id = Math.random().toString(16).slice(2);
     this.type = 'star-stream';
     this.active = true;
@@ -68,7 +70,11 @@ function StarStream({ ctx, n = 1, x, y, vx, vy, rd, hue }) {
     this.vx = vx;
     this.vy = vy;
     this.rd = rd;
-    this.hue = hue;
+    this.color = {
+        hex: color,
+        rgb: colorConvert.hex.rgb(color),
+        hsl: colorConvert.hex.hsl(color)
+    }
     this.stream = [];
 
     // create new star
@@ -80,7 +86,7 @@ function StarStream({ ctx, n = 1, x, y, vx, vy, rd, hue }) {
             vx: this.vx,
             vy: this.vy,
             rd: this.rd,
-            hue: this.hue,
+            hue: this.color.hsl[0],
             alpha: 0
         });
     }
@@ -119,13 +125,19 @@ function StarStream({ ctx, n = 1, x, y, vx, vy, rd, hue }) {
     }
 }
 
-function Burst({ ctx, n = 10, x, y, vx, vy, burnRate }) {
+function Burst({ ctx, n = 10, x, y, vx, vy, color, burnRate }) {
     this.id = Math.random().toString(16).slice(2);
     this.type = 'burst';
     this.active = true;
     this.ctx = ctx;
-    this.burnRate = burnRate;
     this.center = { x, y };
+    this.burnRate = burnRate;
+    this.color = {
+        hex: color,
+        rgb: colorConvert.hex.rgb(color),
+        hsl: colorConvert.hex.hsl(color)
+    }
+
     this.shards = praticleEmitter({
         n: n,
         x: x,
@@ -133,7 +145,7 @@ function Burst({ ctx, n = 10, x, y, vx, vy, burnRate }) {
         vx: vx || [-10, 10],
         vy: vy || [-10, 10],
         rd: [2, 4],
-        hue: [200, 300]
+        hue: this.color.hsl[0] 
     });
 
     this.tick = () => {
@@ -169,21 +181,28 @@ function Burst({ ctx, n = 10, x, y, vx, vy, burnRate }) {
     }
 }
 
-function BlastWave({ ctx, x, y, width = 50, hue = [300, 350], burnRate = 100 }) {
+function BlastWave({ ctx, x, y, width = 50, color, burnRate = 100 }) {
     this.id = Math.random().toString(16).slice(2);
     this.type = 'blast-wave';
     this.active = true;
     this.ctx = ctx;
     this.center = { x, y };
     this.burnRate = (Array.isArray(burnRate) ? randomBetween(burnRate[0], burnRate[1]) : burnRate) / 100;
+    this.color = {
+        hex: color,
+        rgb: colorConvert.hex.rgb(color),
+        hsl: colorConvert.hex.hsl(color)
+    }
+
     this.waves = radialWaveEmitter({
         x: x,
         y: y,
         rd: 25,
         width: width,
-        hue: hue,
+        hue: this.color.hsl[0],
         alpha: 1
     })
+    
 
     this.tick = () => {
         // only tick if active
