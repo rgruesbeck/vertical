@@ -1,9 +1,9 @@
 {
   "metadata": {
     "title": "Vertical",
-    "description": "A vertical obstacle game HTML5 Canvas on Koji. Easily customizable at gokoji.com.",
-    "image": "",
-    "icon": "",
+    "description": "A vertical obstacle game. Easily customizable at gokoji.com.",
+    "image": "https://images.koji-cdn.com/template-assets/25dcc504-821f-41f4-87ce-3aa26f40aca2_1560214190200.png",
+    "icon": "https://images.koji-cdn.com/template-assets/25dcc504-821f-41f4-87ce-3aa26f40aca2_1560214190200.png",
     "icon192": "",
     "icon512": "",
     "gaCode": ""

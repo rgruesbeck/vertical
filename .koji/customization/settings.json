@@ -6,7 +6,7 @@
     "instructionsMobile": "Tap left and right to avoid obstacles",
     "instructionsDesktop": "Use arrow keys to avoid obstacles: [ ⇠ ⇢ ]",
     "gameTopBar": true,
-    "playStyle": "openplay",
+    "playStyle": "laneplay",
     "gameSpeed": 50,
     "lives": 3,
     "fontFamily": "Bungee Inline"
