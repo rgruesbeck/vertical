@@ -37,6 +37,7 @@ import {
 import {
     hashCode,
     randomBetween,
+    bounded,
     throttled
 } from './utils/baseUtils.js';
 
@@ -175,7 +176,9 @@ class Game {
             centerY: this.canvas.height / 2,
             scale: ((this.canvas.width + this.canvas.height) / 2) / 1000,
             scaleWidth: (this.canvas.width / 2) / 1000,
-            scaleHeight: (this.canvas.height / 2) / 1000
+            scaleHeight: (this.canvas.height / 2) / 1000,
+            minSize: ((this.canvas.width + this.canvas.height) / 2) / 20,
+            maxSize: ((this.canvas.width + this.canvas.height) / 2) / 10 
         };
 
         // set document body to backgroundColor
@@ -224,7 +227,7 @@ class Game {
 
         // set player size for open and lane style game play
         let playerWidthLanes = this.state.laneSize;
-        let playerWidthOpen = this.gamePlay.playerSize * this.screen.scaleHeight;
+        let playerWidthOpen = bounded(this.gamePlay.playerSize * this.screen.scaleHeight, this.screen.minSize, this.screen.maxSize);
         this.playerSize = resize({
             image: playerImage,
             width: this.gamePlay.lanes ? playerWidthLanes : playerWidthOpen
@@ -248,7 +251,7 @@ class Game {
 
         // set obstacle size for open and lane style game play
         let obstacleWidthLanes = this.state.laneSize;
-        let obstacleWidthOpen = this.gamePlay.obstacleSize * this.screen.scaleHeight;
+        let obstacleWidthOpen = bounded(this.gamePlay.obstacleSize * this.screen.scaleHeight, this.screen.minSize, this.screen.maxSize);
         this.obstacleSize = resize({
             image: obstacleImage,
             width: this.gamePlay.lanes ? obstacleWidthLanes : obstacleWidthOpen
@@ -652,13 +655,15 @@ class Game {
         if (type === 'start') {
             let location = canvasInputPosition(this.canvas, e.touches[0]);
 
-            if (location.x > this.player.x) {
+            if (location.x > this.screen.centerX) {
                 this.input.right = true;
+                this.input.left = false;
                 this.shiftRight();
             }
 
-            if (location.x < this.player.x) {
+            if (location.x < this.screen.centerX) {
                 this.input.left = true;
+                this.input.right = false;
                 this.shiftLeft();
             }
         }
