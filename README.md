@@ -6,6 +6,10 @@ A vertical obstacle game.
 
 - 🎮 Change the text and game settings
     * [Open configuration](#~/.koji/customization/settings.json!visual)
+- 🎮 Set lane style game play settings: number of lanes, max width.
+    * [Open configuration](#~/.koji/customization/laneplay.json!visual)
+- 🎮 Set open style game play settings player size obstacle size.
+    * [Open configuration](#~/.koji/customization/openplay.json!visual)
 - 🖼️ Replace the player, background and more
     * [Open configuration](#~/.koji/customization/images.json!visual)
 - 🔈 Change the sounds and background music.
@@ -35,6 +39,7 @@ This directory contains code for the game characters.
 This directory contains code base classes like image, sprite, etc.
 - [Image: game/objects/image.js](#~/game/objects/image.js) a simple images class.
 - [Sprite: game/objects/sprite.js](#~/game/objects/sprite.js) a sprite class building game characters with. Being a sprite, gives a character abilities like movement in the x and y direction, speed, and bounding areas.
+- [Effects: game/objects/effects.js](#~/game/objects/effects.js) functions for generating effects.
 
 ### ~/game/helpers
 This directory contains helper code for loading assets and and requesting frames.
