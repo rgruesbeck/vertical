@@ -6,7 +6,7 @@
     "instructionsMobile": "Tap left and right to avoid obstacles",
     "instructionsDesktop": "Use arrow keys to avoid obstacles: [ ⇠ ⇢ ]",
     "gameTopBar": true,
-    "playStyle": "laneplay",
+    "playStyle": "openplay",
     "gameSpeed": 50,
     "lives": 3,
     "fontFamily": "Bungee Inline"
@@ -45,6 +45,12 @@
         "key": "gameTopBar",
         "name": "If game should have a top bar or not",
         "type": "boolean"
+      },
+      {
+        "key": "playStyle",
+        "name": "REQUIRED: Play Style",
+        "description": "This game has two play styles: 'openplay' or 'laneplay' DO NOT LEAVE THIS SECTION BLANK. coresponding vccs for each play style can be found in the 'Lane Play' and 'Open Play' vcc menus",
+        "type": "text"
       },
       {
         "key": "lives",
