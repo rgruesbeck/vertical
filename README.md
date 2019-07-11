@@ -42,8 +42,7 @@ This directory contains code base classes like image, sprite, etc.
 - [Effects: game/objects/effects.js](#~/game/objects/effects.js) functions for generating effects.
 
 ### ~/game/helpers
-This directory contains helper code for loading assets and and requesting frames.
-- [assetLoaders: game/helpers/assetLoaders.js](#~/game/helpers/assetLoaders.js) a collections of functions to help load image, sound, and font assets.
+This directory contains helper code for requesting frames.
 - [animationFrame: game/helpers/sprite.js](#~/game/helpers/animationFrame.js) a shim for requestAnimationFrame, the browsers method for asking for a new frame. Browsers request around 60 frames per second depending on resources.
 
 ### ~/game/utils
