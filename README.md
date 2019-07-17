@@ -16,8 +16,6 @@ A vertical obstacle game.
     * [Open configuration](#~/.koji/customization/sounds.json!visual)
 - 💅 Change the colors and visual style
     * [Open configuration](#~/.koji/customization/colors.json!visual)
-- ⚙️ Add your Google Analytics ID and Open Graph information for sharing
-    * [Open configuration](#~/.koji/customization/metadata.json!visual)
 
 ## Structure
 ### ~/
