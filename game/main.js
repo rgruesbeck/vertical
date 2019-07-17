@@ -38,6 +38,8 @@ import audioContext from 'audio-context';
 import audioPlayback from 'audio-play';
 import unlockAudioContext from 'unlock-audio-context';
 
+import preventParent from 'prevent-parent';
+
 import {
     hashCode,
     randomBetween,
@@ -76,6 +78,9 @@ class Game {
         // set topbar
         this.topbar = topbar;
         this.topbar.active = config.settings.gameTopBar;
+
+	// prevent parent wondow form scrolling
+	preventParent();
 
         // set playstyle: lanes or open
         this.playStyle = config.settings.playStyle;
