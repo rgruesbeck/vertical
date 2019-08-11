@@ -346,15 +346,14 @@ class Game {
             }
 
             if (!this.state.muted && !this.state.backgroundMusic) {
-                let sound = this.sounds.backgroundMusic;
-                this.state.backgroundMusic = audioPlayback(sound, {
+                this.state.backgroundMusic = true;
+                this.playback('backgroundMusic', this.sounds.backgroundMusic, {
                     start: 0,
-                    end: sound.duration,
+                    end: this.sounds.backgroundMusic.duration,
                     loop: true,
                     context: this.audioCtx
                 });
             }
-
 
             // add an obstacle
             let shouldAddObstacle = this.frame.count % 120 === 0 || // 2 seconds have gone by
