@@ -9,7 +9,7 @@
     "playStyle": "openplay",
     "gameSpeed": 50,
     "lives": 3,
-    "fontFamily": "Bungee Inline"
+    "fontFamily": "Bungee"
   },
   "@@editor": [{
     "key": "settings",

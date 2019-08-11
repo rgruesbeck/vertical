@@ -552,8 +552,6 @@ class Game {
 
         // game over
         if (this.state.current === 'over') {
-            // game over code
-
             // update and draw effects
             for (let i = 0; i < this.effects.length; i++) {
                 let effect = this.effects[i];
@@ -568,14 +566,19 @@ class Game {
                 
             }
 
-            if (this.effects.length === 1) {
-                setTimeout(this.load(), 2000);
-            }
+            setTimeout(() => {
+                window.setScore(this.state.score);
+                window.setAppView('setScore');
+            }, 1000)
 
         }
 
         // draw the next screen
-        this.requestFrame(() => this.play());
+        if (this.state.current === 'stop') {
+            this.cancelFrame();
+        } else {
+            this.requestFrame(() => this.play());
+        }
     }
 
     shiftRight() {
@@ -694,7 +697,7 @@ class Game {
 
     handleResize() {
 
-        document.location.reload();
+        // document.location.reload();
     }
 
     // method:pause pause game
@@ -783,6 +786,11 @@ class Game {
         })
     }
 
+    stopPlaylist() {
+        this.playlist
+        .forEach(s => this.stopPlayback(s.key))
+    }
+
     // reset game
     reset() {
         document.location.reload();
@@ -815,6 +823,11 @@ class Game {
     // see game/helpers/animationframe.js for more information
     cancelFrame() {
         cancelAnimationFrame(this.frame.count);
+    }
+
+    destroy() {
+        this.setState({ current: 'stop' })
+        this.stopPlaylist();
     }
 }
 
