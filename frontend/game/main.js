@@ -825,8 +825,18 @@ class Game {
     }
 
     destroy() {
-        this.setState({ current: 'stop' })
+        // stop game loop and stop music
+        this.setState({ current: 'stop' });
         this.stopPlaylist();
+
+        // cleanup event listeners
+        document.removeEventListener('keydown', this.handleKeyboardInput);
+        document.removeEventListener('keyup', this.handleKeyboardInput);
+        document.removeEventListener('touchstart', this.handleTap);
+        document.removeEventListener('touchend', this.handleTap);
+        this.overlay.root.removeEventListener('click', this.handleClicks);
+        window.removeEventListener('resize', this.handleResize);
+        window.removeEventListener("orientationchange", this.handleResize);
     }
 }
 
