@@ -12,16 +12,15 @@ class GameContainer extends Component {
     const gameOverlay = document.getElementById('gameOverlay');
     const topbar = document.getElementById('topBar');
 
-    this.overlay = new Overlay(gameOverlay)
-    this.game = new Game(gameScreen, this.overlay, topbar, Koji.config);
+    const overlay = new Overlay(gameOverlay)
+    this.game = new Game(gameScreen, overlay, topbar, Koji.config);
 
     this.game.load();
   }
 
   componentWillUnmount() {
+
     this.game.destroy();
-    delete this.game;
-    delete this.overlay;
   }
 
   render() {
